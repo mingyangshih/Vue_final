@@ -9,10 +9,10 @@
 export default {
   name: "App",
   created() {
-    const api = ` ${process.env.APIPATH}/api/${process.env.PATHNAME}/products`;
-    this.$http.get(api).then(data => {
-      console.log(data);
-    });
+    // const api = ` ${process.env.APIPATH}/api/${process.env.PATHNAME}/products`;
+    // this.$http.get(api).then(data => {
+    //   console.log(data);
+    // });
   }
 };
 </script>
