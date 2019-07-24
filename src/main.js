@@ -17,3 +17,20 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+router.beforeEach((to, from, next) => {
+  // ...
+  console.log('to', to, 'from', from, 'next', next);
+  if (to.meta.requiresAuth) {
+    // console.log('Need to verify')
+    const api = ` ${process.env.APIPATH}/api/user/check`;
+    axios.post(api).then(response => {
+      if (response.data.success) {
+        next();
+      } else {
+        next({ path: 'login' })
+      }
+    })
+  } else {
+    next();
+  }
+})
