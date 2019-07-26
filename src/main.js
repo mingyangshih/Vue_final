@@ -3,6 +3,10 @@
 import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import 'bootstrap';
+import 'jquery'
+
+
 import App from './App'
 import router from './router'
 
@@ -19,7 +23,7 @@ new Vue({
 })
 router.beforeEach((to, from, next) => {
   // ...
-  console.log('to', to, 'from', from, 'next', next);
+  // console.log('to', to, 'from', from, 'next', next);
   if (to.meta.requiresAuth) {
     // console.log('Need to verify')
     const api = ` ${process.env.APIPATH}/api/user/check`;

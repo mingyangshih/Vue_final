@@ -47,6 +47,18 @@ export default {
       msg: "Welcome to Your Vue.js App"
     };
   },
+  created() {
+    const api = ` ${process.env.APIPATH}/api/user/check`;
+    const vm = this;
+    this.$http.post(api).then(response => {
+      if (response.data.success) {
+        console.log(response.data.success);
+      } else {
+        console.log(response.data.success);
+        vm.$router.push("/login");
+      }
+    });
+  },
   methods: {
     logout() {
       const api = ` ${process.env.APIPATH}/logout`;
