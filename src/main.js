@@ -3,8 +3,9 @@
 import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-import 'bootstrap';
-import 'jquery'
+import 'bootstrap'
+import $ from 'jquery';
+window.$ = $; //將原本的$變成jquery
 
 
 import App from './App'
