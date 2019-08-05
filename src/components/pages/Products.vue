@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div class="vld-parent">
+      <loading :active.sync="isLoading" loader="dots"></loading>
+    </div>
     <div class="text-right">
       <button class="btn btn-primary" id="addModal" @click.prevent="openModal(true)">建立新的產品</button>
     </div>
@@ -69,15 +72,17 @@
                 <div class="form-group">
                   <label for="customFile">
                     或 上傳圖片
-                    <i class="fas fa-spinner fa-spin"></i>
+                    <i class="fas fa-spinner fa-spin" v-if="status.fileUploading"></i>
                   </label>
-                  <input type="file" id="customFile" class="form-control" ref="files" />
+                  <input
+                    type="file"
+                    id="customFile"
+                    class="form-control"
+                    ref="files"
+                    @change="uploadFile"
+                  />
                 </div>
-                <img
-                  img="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=828346ed697837ce808cae68d3ddc3cf&auto=format&fit=crop&w=1350&q=80"
-                  class="img-fluid"
-                  alt
-                />
+                <img :src="tempProduct.imageUrl" class="img-fluid" alt />
               </div>
               <div class="col-sm-8">
                 <div class="form-group">
@@ -122,7 +127,7 @@
                       class="form-control"
                       id="origin_price"
                       placeholder="請輸入原價"
-                      v-model="tempProduct.orogin_price"
+                      v-model="tempProduct.origin_price"
                     />
                   </div>
                   <div class="form-group col-md-6">
@@ -211,27 +216,41 @@
         </div>
       </div>
     </div>
+    <pagination :pagination="pagination" @pageTrigger="getProducts" />
   </div>
 </template>
 
 <script>
 // import $ from "jquery";
+import pagination from "./../Pagination";
 export default {
+  components: {
+    pagination
+  },
   data() {
     return {
       products: [],
       tempProduct: {},
-      isNew: false
+      isNew: false,
+      status: {
+        fileUploading: false
+      },
+      pagination: {},
+      isLoading: false
     };
   },
   methods: {
-    getProducts() {
-      const api = `${process.env.APIPATH}/api/${process.env.PATHNAME}/admin/products`;
+    getProducts(page) {
+      const api = `${process.env.APIPATH}/api/${process.env.PATHNAME}/admin/products?page=${page}`;
       const vm = this;
+      vm.isLoading = true;
       this.$http.get(api).then(response => {
-        // console.log(data.data.products);
         vm.products = response.data.products;
-        console.log(vm.products);
+        //overlay loading關閉
+        vm.isLoading = false;
+        //pagination
+        vm.pagination = response.data.pagination;
+        console.log(response.data);
       });
     },
     openModal(isNew, item) {
@@ -255,7 +274,6 @@ export default {
       let api = `${process.env.APIPATH}/api/${process.env.PATHNAME}/admin/product/${vm.tempProduct.id}`;
       let httpMethod = "delete";
       this.$http[httpMethod](api).then(response => {
-        console.log(response);
         if (response.data.success) {
           $("#delProductModal").modal("hide");
           this.getProducts();
@@ -274,6 +292,7 @@ export default {
         // console.log(response);
         if (response.data.success) {
           $("#productModal").modal("hide");
+          vm.status.fileUploading = false;
           vm.getProducts();
         } else {
           $("#productModal").modal("hide");
@@ -281,8 +300,35 @@ export default {
           console.log("add fail");
         }
       });
+    },
+    uploadFile() {
+      // console.log(this);
+      let formData = new FormData();
+      let file = this.$refs.files.files[0];
+      const vm = this;
+      vm.status.fileUploading = true;
+      let api = `${process.env.APIPATH}/api/${process.env.PATHNAME}/admin/upload`;
+      // console.log(file);
+      formData.append("file-to-upload", file);
+      this.$http
+        .post(api, formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        })
+        .then(response => {
+          if (response.data.success) {
+            vm.$set(vm.tempProduct, "imageUrl", response.data.imageUrl);
+            console.log(response);
+            //檔案上傳動畫狀態
+            vm.status.fileUploading = false;
+          } else {
+            vm.$bus.$emit("message:push", response.data.message, "danger");
+            //檔案上傳動畫狀態
+            vm.status.fileUploading = false;
+          }
+        });
     }
   },
+
   created() {
     this.getProducts();
   }
