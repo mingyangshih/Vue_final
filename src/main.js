@@ -14,6 +14,9 @@ import App from './App'
 import router from './router'
 //在proto中加入$bus
 import './bus.js'
+//filters
+import filter from './filters/currency';
+Vue.filter('currency', filter);
 // 元件若很常用到可以在全域註冊
 // import Alert from "./components/AlertMessage";
 

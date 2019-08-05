@@ -47,7 +47,7 @@ export default {
       const vm = this;
       vm.page = page;
       this.$emit("pageTrigger", Number(vm.page));
-      console.log(vm.page);
+      // console.log(vm.page);
     }
   }
 };
