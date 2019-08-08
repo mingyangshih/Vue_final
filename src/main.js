@@ -5,9 +5,10 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import 'bootstrap'
 import $ from 'jquery';
+window.$ = $; //將原本的$變成jquery
 //Vue loading overlay 套件
 import Loading from 'vue-loading-overlay';
-window.$ = $; //將原本的$變成jquery
+
 
 
 import App from './App'
@@ -44,7 +45,7 @@ router.beforeEach((to, from, next) => {
       if (response.data.success) {
         next();
       } else {
-        next({ path: 'login' })
+        router.push('/');
       }
     })
   } else {

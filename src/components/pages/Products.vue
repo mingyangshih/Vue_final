@@ -250,7 +250,7 @@ export default {
         vm.isLoading = false;
         //pagination
         vm.pagination = response.data.pagination;
-        console.log(response.data);
+        // console.log(response.data);
       });
     },
     openModal(isNew, item) {

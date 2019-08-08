@@ -10,9 +10,25 @@
       />
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="#">Sign out</a>
+          <a class="nav-link" href="#" @click.prevent="singOut">Sign out</a>
         </li>
       </ul>
     </nav>
   </div>
 </template>
+<script>
+export default {
+  methods: {
+    singOut() {
+      const api = ` ${process.env.APIPATH}/logout`;
+      const vm = this;
+      this.$http.post(api).then(response => {
+        // console.log(response);
+        if (response.data.success) {
+          vm.$router.push("/");
+        }
+      });
+    }
+  }
+};
+</script>

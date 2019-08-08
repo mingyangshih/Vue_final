@@ -5,6 +5,7 @@
         <li
           class="page-item"
           :class="{ 'disabled' : !pagination.has_pre }"
+          v-if="pagination.has_pre"
           @click.prevent="pagination_renew(pagination.current_page - 1)"
         >
           <a class="page-link" href="#" aria-label="Previous">
@@ -22,6 +23,7 @@
         <li
           class="page-item"
           :class="{ 'disabled' : !pagination.has_next }"
+          v-if="pagination.has_next"
           @click.prevent="pagination_renew(pagination.current_page + 1)"
         >
           <a class="page-link" href="#" aria-label="Next">
