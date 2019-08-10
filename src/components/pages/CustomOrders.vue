@@ -43,6 +43,9 @@
         </div>
       </div>
     </div>
+    <hr />
+    <!-- 購物車資料 -->
+    <cartTable :cartData="cartData" :cartTotalPrice="cartTotalPrice" />
     <!-- detail modal -->
     <div class="modal fade" tabindex="-1" role="dialog" id="productModal">
       <div class="modal-dialog" role="document">
@@ -83,16 +86,22 @@
           </div>
         </div>
       </div>
-    </div>
+    </div>    
   </div>
 </template>
 <script>
+import cartTable from './CartTable'
 export default {
+  components : {
+    cartTable
+  },
   data() {
     return {
       products: [],
       product: {},
       isLoading: false,
+      cartData : [],
+      cartTotalPrice :0,
       status: {
         loadingSingleItem: "", //透過id確認是否讀取成功，關閉轉圈動畫
         addtocart: ""
@@ -118,9 +127,8 @@ export default {
         vm.product = response.data.product;
 
         $("#productModal").modal("show");
-        console.log(response);
+        // console.log(response);
         vm.status.loadingSingleItem = "";
-        // vm.product.num = 1;
       });
     },
     addToCart(id, qty = 1) {
@@ -136,27 +144,24 @@ export default {
         $("#productModal").modal("hide");
         console.log(response);
         vm.status.addtocart = "";
+        // 新增完後再取一次購物車資料
+        this.getCart();
       });
+      this.getCart();
     },
     getCart() {
       const api = `${process.env.APIPATH}/api/${process.env.PATHNAME}/cart`;
       const vm = this;
-      // const cart = {
-      //   product_id: id,
-      //   qty
-      // };
-      // vm.status.addtocart = id;
       this.$http.get(api).then(response => {
-        // vm.product = response.data.product;
-        // $("#productModal").modal("hide");
         console.log(response);
-        // vm.status.addtocart = "";
-      });
+        this.cartData = response.data.data.carts;
+        this.cartTotalPrice = response.data.data.final_total;
+      });      
     }
   },
   created() {
     this.getProducts();
-    // this.getCart();
+    this.getCart();
   }
 };
 </script>

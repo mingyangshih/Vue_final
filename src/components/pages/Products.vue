@@ -170,7 +170,7 @@
                       type="checkbox"
                       id="is_enabled"
                       v-model="tempProduct.is_enabled"
-                      :true-value="1"
+                      :true-value="1"  
                       :false-value="0"
                     />
                     <label class="form-check-label" for="is_enabled">是否啟用</label>
@@ -281,7 +281,7 @@ export default {
       });
     },
     updateProduct() {
-      let api = `${process.env.APIPATH}/api/${process.env.PATHNAME}/admin/product`;
+      let api = `${process.env.APIPATH}/api/${process.env.PATHNAMEs}/admin/product`;
       let httpMethod = "post";
       const vm = this;
       if (!vm.isNew) {
