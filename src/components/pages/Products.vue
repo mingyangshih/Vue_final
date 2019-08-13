@@ -170,7 +170,7 @@
                       type="checkbox"
                       id="is_enabled"
                       v-model="tempProduct.is_enabled"
-                      :true-value="1"  
+                      :true-value="1"
                       :false-value="0"
                     />
                     <label class="form-check-label" for="is_enabled">是否啟用</label>
@@ -302,9 +302,8 @@ export default {
       });
     },
     uploadFile() {
-      // console.log(this);
       let formData = new FormData();
-      let file = this.$refs.files.files[0];
+      let file = this.$refs.files.files[0]; //可到照上傳的資料
       const vm = this;
       vm.status.fileUploading = true;
       let api = `${process.env.APIPATH}/api/${process.env.PATHNAME}/admin/upload`;
@@ -317,7 +316,7 @@ export default {
         .then(response => {
           if (response.data.success) {
             vm.$set(vm.tempProduct, "imageUrl", response.data.imageUrl);
-            console.log(response);
+            // console.log(response);
             //檔案上傳動畫狀態
             vm.status.fileUploading = false;
           } else {

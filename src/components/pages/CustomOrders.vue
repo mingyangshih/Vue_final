@@ -45,7 +45,13 @@
     </div>
     <hr />
     <!-- 購物車資料 -->
-    <cartTable :cartData="cartData" :cartTotalPrice="cartTotalPrice" />
+    <cartTable
+      :cartData="cartData"
+      :cartTotalPrice="cartTotalPrice"
+      :cartFinalTotalPrice="cartFinalTotalPrice"
+      @removeCart="removeCartItem"
+      @addCouponCode="addCoupon"
+    />
     <!-- detail modal -->
     <div class="modal fade" tabindex="-1" role="dialog" id="productModal">
       <div class="modal-dialog" role="document">
@@ -86,13 +92,13 @@
           </div>
         </div>
       </div>
-    </div>    
+    </div>
   </div>
 </template>
 <script>
-import cartTable from './CartTable'
+import cartTable from "../CartTable";
 export default {
-  components : {
+  components: {
     cartTable
   },
   data() {
@@ -100,8 +106,9 @@ export default {
       products: [],
       product: {},
       isLoading: false,
-      cartData : [],
-      cartTotalPrice :0,
+      cartData: [],
+      cartTotalPrice: 0,
+      cartFinalTotalPrice: 0,
       status: {
         loadingSingleItem: "", //透過id確認是否讀取成功，關閉轉圈動畫
         addtocart: ""
@@ -136,13 +143,12 @@ export default {
       const vm = this;
       const cart = {
         product_id: id,
-        qty
+        qty: qty
       };
       vm.status.addtocart = id;
       this.$http.post(api, { data: cart }).then(response => {
-        // vm.product = response.data.product;
-        $("#productModal").modal("hide");
         console.log(response);
+        $("#productModal").modal("hide");
         vm.status.addtocart = "";
         // 新增完後再取一次購物車資料
         this.getCart();
@@ -155,8 +161,30 @@ export default {
       this.$http.get(api).then(response => {
         console.log(response);
         this.cartData = response.data.data.carts;
-        this.cartTotalPrice = response.data.data.final_total;
-      });      
+        this.cartTotalPrice = response.data.data.total;
+        this.cartFinalTotalPrice = response.data.data.final_total;
+      });
+    },
+    removeCartItem(id) {
+      const api = `${process.env.APIPATH}/api/${process.env.PATHNAME}/cart/${id}`;
+      const vm = this;
+      vm.isLoading = true;
+      this.$http.delete(api).then(response => {
+        vm.getCart();
+        vm.isLoading = false;
+      });
+    },
+    addCoupon(coupon_code) {
+      const api = `${process.env.APIPATH}/api/${process.env.PATHNAME}/coupon`;
+      const vm = this;
+      const coupon = { code: coupon_code };
+      vm.isLoading = true;
+      this.$http.post(api, { data: coupon }).then(response => {
+        // vm.getCart();
+        this.getCart();
+        console.log(response);
+        vm.isLoading = false;
+      });
     }
   },
   created() {

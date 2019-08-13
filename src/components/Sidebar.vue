@@ -13,6 +13,11 @@
             <i class="fas fa-box-open mr-1"></i>產品列表
           </router-link>
         </li>
+        <li class="nav-item">
+          <router-link to="/admin/coupon" class="nav-link font-weight-bold">
+            <i class="fas fa-ticket-alt mr-1"></i>優惠券
+          </router-link>
+        </li>
       </ul>
 
       <h6 class="sidebar-heading d-flex align-items-center px-3 mt-4 mb-1 text-muted">
