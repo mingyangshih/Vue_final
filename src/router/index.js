@@ -6,6 +6,8 @@ import Login from '@/components/pages/Login'
 import Products from '@/components/pages/Products'
 import CustomOrders from '@/components/pages/CustomOrders'
 import Coupon from '@/components/pages/Coupon'
+import CustomerCheckout from '@/components/pages/CustomerCheckout'
+import Order from '@/components/pages/Order'
 Vue.use(Router)
 
 export default new Router({
@@ -37,6 +39,12 @@ export default new Router({
           component: Coupon,
           meta: { requiresAuth: true }
         },
+        {
+          path: 'order',
+          name: 'Order',
+          component: Order,
+          meta: { requiresAuth: true }
+        }
       ]
     },
     {
@@ -49,7 +57,13 @@ export default new Router({
           path: 'customer_orders',
           name: 'CustomOrders',
           component: CustomOrders,
+        },
+        {
+          path: 'customer_checkout/:orderID',
+          name: 'CustomerCheckout',
+          component: CustomerCheckout,
         }
+
       ]
     },
   ]

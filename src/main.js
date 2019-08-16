@@ -2,13 +2,20 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import axios from 'axios'
+Vue.use(VueAxios, axios);
 import VueAxios from 'vue-axios'
 import 'bootstrap'
 import $ from 'jquery';
 window.$ = $; //將原本的$變成jquery
 //Vue loading overlay 套件
 import Loading from 'vue-loading-overlay';
-
+// Vee validate套件
+import ZHTW from 'vee-validate/dist/locale/zh_TW';
+import VeeValidate, { Validator } from 'vee-validate';
+Vue.use(VeeValidate, {
+  events: 'input|blur',
+});
+Validator.localize('ZHTW', ZHTW);
 
 
 import App from './App'
@@ -22,7 +29,8 @@ Vue.filter('currency', filter);
 // import Alert from "./components/AlertMessage";
 
 Vue.config.productionTip = false;
-Vue.use(VueAxios, axios);
+
+
 //把後端回傳的session存在cookies內
 axios.defaults.withCredentials = true;
 //使用Vue loading overlay元件

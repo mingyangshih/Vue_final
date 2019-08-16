@@ -25,7 +25,7 @@
               {{item.product.title}}
               <div class="text-success" v-if="item.coupon">已套用優惠券</div>
             </td>
-            <td>{{item.product.num}} / {{item.product.unit}}</td>
+            <td>{{item.qty}} / {{item.product.unit}}</td>
             <td class="text-right">{{item.product.price}}</td>
           </tr>
         </tbody>

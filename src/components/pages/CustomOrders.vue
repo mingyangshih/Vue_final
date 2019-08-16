@@ -52,6 +52,89 @@
       @removeCart="removeCartItem"
       @addCouponCode="addCoupon"
     />
+    <!-- 表單驗證 -->
+    <div class="my-5 row justify-content-center">
+      <form class="col-md-6" @submit.prevent="createOrder">
+        <div class="form-group">
+          <label for="useremail" class="text-left w-100">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            :class="{'is-invalid' : errors.has('email')}"
+            name="email"
+            id="useremail"
+            v-model="form.user.email"
+            placeholder="請輸入 Email"
+            v-validate="'required|email'"
+            data-vv-as="信箱"
+          />
+          <span class="text-danger d-block w-100 text-left">{{ errors.first('email') }}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="username" class="text-left w-100">收件人姓名</label>
+          <input
+            type="text"
+            class="form-control"
+            :class="{'is-invalid' : errors.has('name')}"
+            name="name"
+            id="username"
+            v-model="form.user.name"
+            placeholder="輸入姓名"
+            v-validate="'required'"
+            data-vv-as="姓名"
+          />
+          <span class="text-danger d-block w-100 text-left">{{ errors.first('name') }}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="usertel" class="text-left w-100">收件人電話</label>
+          <input
+            type="tel"
+            class="form-control"
+            :class="{'is-invalid' : errors.has('tel')}"
+            id="usertel"
+            v-model="form.user.tel"
+            placeholder="請輸入電話"
+            v-validate="'required|length:10'"
+            name="tel"
+            data-vv-as="電話"
+          />
+          <span class="text-danger d-block w-100 text-left">{{ errors.first('tel') }}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="useraddress" class="text-left w-100">收件人地址</label>
+          <input
+            type="text"
+            class="form-control"
+            :class="{'is-invalid' : errors.has('address')}"
+            name="address"
+            id="useraddress"
+            v-model="form.user.address"
+            placeholder="請輸入地址"
+            v-validate="'required'"
+            data-vv-as="地址"
+          />
+          <span class="text-danger d-block w-100 text-left">{{ errors.first('address') }}</span>
+        </div>
+
+        <div class="form-group">
+          <label for="comment" class="text-left w-100">留言</label>
+          <textarea
+            name
+            id="comment"
+            class="form-control"
+            cols="30"
+            rows="10"
+            v-model="form.message"
+          ></textarea>
+        </div>
+        <div class="text-right">
+          <button class="btn btn-danger">送出訂單</button>
+        </div>
+      </form>
+    </div>
     <!-- detail modal -->
     <div class="modal fade" tabindex="-1" role="dialog" id="productModal">
       <div class="modal-dialog" role="document">
@@ -112,6 +195,10 @@ export default {
       status: {
         loadingSingleItem: "", //透過id確認是否讀取成功，關閉轉圈動畫
         addtocart: ""
+      },
+      form: {
+        user: {},
+        message: ""
       }
     };
   },
@@ -147,7 +234,7 @@ export default {
       };
       vm.status.addtocart = id;
       this.$http.post(api, { data: cart }).then(response => {
-        console.log(response);
+        // console.log(response);
         $("#productModal").modal("hide");
         vm.status.addtocart = "";
         // 新增完後再取一次購物車資料
@@ -159,7 +246,7 @@ export default {
       const api = `${process.env.APIPATH}/api/${process.env.PATHNAME}/cart`;
       const vm = this;
       this.$http.get(api).then(response => {
-        console.log(response);
+        // console.log(response);
         this.cartData = response.data.data.carts;
         this.cartTotalPrice = response.data.data.total;
         this.cartFinalTotalPrice = response.data.data.final_total;
@@ -182,8 +269,29 @@ export default {
       this.$http.post(api, { data: coupon }).then(response => {
         // vm.getCart();
         this.getCart();
-        console.log(response);
+        // console.log(response);
         vm.isLoading = false;
+      });
+    },
+    createOrder() {
+      const api = `${process.env.APIPATH}/api/${process.env.PATHNAME}/order`;
+      const vm = this;
+      vm.isLoading = true;
+      this.$validator.validate().then(valid => {
+        if (valid) {
+          // do stuff if not valid.
+          this.$http.post(api, { data: vm.form }).then(response => {
+            // console.log(response);
+            if (response.data.success) {
+              this.$router.push(`/customer_checkout/${response.data.orderId}`);
+            }
+            vm.isLoading = false;
+            this.getCart();
+          });
+        } else {
+          console.log("欄位不完整");
+          vm.isLoading = false;
+        }
       });
     }
   },

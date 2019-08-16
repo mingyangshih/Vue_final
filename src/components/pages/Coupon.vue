@@ -20,7 +20,7 @@
           <td class="text-right">{{item.percent}}</td>
           <td
             class="text-right"
-          >{{`${new Date(item.due_date).getFullYear()}/${new Date(item.due_date).getMonth()+1}/${new Date(item.due_date).getDate()}`}}</td>
+          >{{`${new Date(item.due_date*1000).getFullYear()}/${new Date(item.due_date*1000).getMonth()+1}/${new Date(item.due_date*1000).getDate()}`}}</td>
           <td class="text-center">
             <span v-if="item.is_enabled" class="text-success">啟用</span>
             <span v-else>未啟用</span>
@@ -176,15 +176,15 @@ export default {
         this.couponData = { ...item };
         //調整日期格式
         const month =
-          new Date(item.due_date).getMonth() < 10
-            ? "0" + (new Date(item.due_date).getMonth() + 1)
-            : new Date(item.due_date).getMonth() + 1;
+          new Date(item.due_date * 1000).getMonth() < 10
+            ? "0" + (new Date(item.due_date * 1000).getMonth() + 1)
+            : new Date(item.due_date * 1000).getMonth() + 1;
         const date =
-          new Date(item.dut_date).getDate() < 10
-            ? "0" + new Date(item.due_date).getDate()
-            : new Date(item.due_date).getDate();
+          new Date(item.dut_date * 1000).getDate() < 10
+            ? "0" + new Date(item.due_date * 1000).getDate()
+            : new Date(item.due_date * 1000).getDate();
         this.couponData.due_date = `${new Date(
-          item.due_date
+          item.due_date * 1000
         ).getFullYear()}-${month}-${date}`;
         this.isNew = false;
       }
@@ -197,7 +197,7 @@ export default {
     addNewCoupon() {
       const vm = this;
       const timestamp = new Date(vm.couponData.due_date).getTime(); //Date 內無值的話為當前時間
-      vm.couponData.due_date = timestamp; //改成API所需格式
+      vm.couponData.due_date = Math.floor(timestamp / 1000); //改成API所需格式
       const postCoupon = vm.couponData;
 
       let api = `${process.env.APIPATH}/api/${process.env.PATHNAME}/admin/coupon`;
@@ -211,7 +211,7 @@ export default {
     modifyCoupon(id) {
       const vm = this;
       const timestamp = new Date(vm.couponData.due_date).getTime(); //Date 內無值的話為當前時間
-      vm.couponData.due_date = timestamp; //改成API所需格式
+      vm.couponData.due_date = Math.floor(timestamp / 1000); //改成API所需格式
       const postCoupon = vm.couponData;
 
       let api = `${process.env.APIPATH}/api/${process.env.PATHNAME}/admin/coupon/${id}`;
